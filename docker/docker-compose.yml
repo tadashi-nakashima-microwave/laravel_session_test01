@@ -1,0 +1,110 @@
+
+version: '3'
+
+services:
+
+  # MySQL
+  mysql:
+    container_name: mysql
+    build: ./mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: epark
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+      TZ: 'Asia/Tokyo'
+    volumes:
+    - /var/lib/mysql
+    - /etc/mysql/conf.d
+    - /docker-entrypoint-initdb.d
+    networks:
+      - container-link
+    ports:
+    - 3306:3306
+
+  # phpMyAdmin MySQLのメンテナンス用
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+      - PMA_USER=user
+      - PMA_PASSWORD=user
+    ports:
+    - 8888:80
+    depends_on:
+    - mysql
+    networks:
+      - container-link
+    volumes:
+       - /sessions
+
+  # Redis
+  redis:
+    container_name: redis
+    image: "redis:6.0.8"
+    ports:
+      - "6379:6379"
+    volumes:
+      - /data
+      # # ローカル開発用にPCローカルを参照するようにする
+      # - "./redis/data:/data"
+    networks:
+      - container-link
+
+  # php Laravel/Lumen
+  php:
+    container_name: php
+    environment:
+      TZ: 'Asia/Tokyo'
+    build: ./php
+    volumes:
+      - /var/www
+      # # ローカル開発用にPCローカルを参照するようにする
+      # # （サーバーにデプロイする場合には、Dockerfileでイメージにソースをコピーして組み込むようにする）
+      # - ./src:/var/www
+    networks:
+      - container-link
+
+  # nginx php公開用
+  nginx:
+    container_name: nginx
+    environment:
+      TZ: 'Asia/Tokyo'
+    build: ./nginx
+    ports:
+    - 80:80
+    volumes_from:
+      - php
+    # default.conf デバッグ用
+    # volumes:
+    #   - ./nginx/conf:/etc/nginx/conf.d/
+    depends_on:
+    - php
+    networks:
+      - container-link
+
+  vue:
+    container_name: vue
+    environment:
+      TZ: 'Asia/Tokyo'
+    build: ./vue
+    tty: true
+    networks:
+      - container-link
+    ports:
+    - 8080:8080
+
+# 共有ネットワーク設定
+networks:
+  # docker-composeで勝手にデフォルトネットワークが生成される予防。（自動で全コンテナが所属するbridgeを指定）
+  default:
+    external:
+      name: bridge
+  # コンテナ間通信用のネットワークセグメント
+  container-link:
+    # これが作成されるネットワーク名（同名がなければ自動生成される）
+    name: my-local-network
+    driver: bridge
+
