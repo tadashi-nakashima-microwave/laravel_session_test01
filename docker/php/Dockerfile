@@ -20,11 +20,11 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 \
 
 WORKDIR /var/www
 
-# Laravelプロジェクト作成
-RUN rm -rf /var/www/html \
-  && composer create-project "laravel/laravel=6.0" . \
-  && chmod -R 777 storage \
-  && chmod -R 777 bootstrap/cache
+# # Laravelプロジェクト作成
+# RUN rm -rf /var/www/html \
+#   && composer create-project "laravel/laravel=6.0" . \
+#   && chmod -R 777 storage \
+#   && chmod -R 777 bootstrap/cache
 
 # # Lumenプロジェクト作成
 # RUN rm -rf /var/www/html \

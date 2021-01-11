@@ -1,3 +1,3 @@
 FROM nginx:1.18.0
-COPY ./conf/default.conf /etc/nginx/conf.d/
+# COPY ./conf/default.conf /etc/nginx/conf.d/
 RUN echo "now building..."

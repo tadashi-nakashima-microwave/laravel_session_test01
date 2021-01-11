@@ -12,7 +12,7 @@ EXPOSE 3306
 COPY ./my.cnf /etc/mysql/conf.d/mysql.cnf
 
 #環境構築時に実行するsql(スキーマ作成、初期データなど)
-COPY ./20201214_faspa_DDL.sql /docker-entrypoint-initdb.d/20201214_faspa_DDL.sql
+#COPY ./20201214_faspa_DDL.sql /docker-entrypoint-initdb.d/20201214_faspa_DDL.sql
 
 # mysql -u root --password=root epark < 20201214_faspa_DDL.sql
 

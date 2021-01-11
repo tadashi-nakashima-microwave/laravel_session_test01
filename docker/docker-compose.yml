@@ -40,18 +40,18 @@ services:
     volumes:
        - /sessions
 
-  # Redis
-  redis:
-    container_name: redis
-    image: "redis:6.0.8"
-    ports:
-      - "6379:6379"
-    volumes:
-      - /data
-      # # ローカル開発用にPCローカルを参照するようにする
-      # - "./redis/data:/data"
-    networks:
-      - container-link
+  # # Redis
+  # redis:
+  #   container_name: redis
+  #   image: "redis:6.0.8"
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - /data
+  #     # # ローカル開発用にPCローカルを参照するようにする
+  #     # - "./redis/data:/data"
+  #   networks:
+  #     - container-link
 
   # php Laravel/Lumen
   php:
@@ -60,10 +60,10 @@ services:
       TZ: 'Asia/Tokyo'
     build: ./php
     volumes:
-      - /var/www
-      # # ローカル開発用にPCローカルを参照するようにする
-      # # （サーバーにデプロイする場合には、Dockerfileでイメージにソースをコピーして組み込むようにする）
-      # - ./src:/var/www
+      # - /var/www
+      # ローカル開発用にPCローカルを参照するようにする
+      # （サーバーにデプロイする場合には、Dockerfileでイメージにソースをコピーして組み込むようにする）
+      - ./src:/var/www
     networks:
       - container-link
 
@@ -78,23 +78,23 @@ services:
     volumes_from:
       - php
     # default.conf デバッグ用
-    # volumes:
-    #   - ./nginx/conf:/etc/nginx/conf.d/
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d/
     depends_on:
     - php
     networks:
       - container-link
 
-  vue:
-    container_name: vue
-    environment:
-      TZ: 'Asia/Tokyo'
-    build: ./vue
-    tty: true
-    networks:
-      - container-link
-    ports:
-    - 8080:8080
+  # vue:
+  #   container_name: vue
+  #   environment:
+  #     TZ: 'Asia/Tokyo'
+  #   build: ./vue
+  #   tty: true
+  #   networks:
+  #     - container-link
+  #   ports:
+  #   - 8080:8080
 
 # 共有ネットワーク設定
 networks:
